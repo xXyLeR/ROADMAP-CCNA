@@ -1,0 +1,676 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:transparent}
+:root{
+  --bg:#fff;--bg2:#f5f4f0;--bg3:#eeecea;
+  --tx:#1a1a18;--tx2:#5f5e5a;--tx3:#888780;
+  --bd:rgba(0,0,0,0.10);--bd2:rgba(0,0,0,0.18);--bd3:rgba(0,0,0,0.30);
+  --green:#1D9E75;--gold:#E5A800;
+}
+.rw{padding:1rem 1rem 2.5rem;max-width:980px}
+.hero{background:linear-gradient(135deg,#0050A0 0%,#003070 100%);border-radius:14px;padding:18px 20px;margin-bottom:1.25rem;color:#fff;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hero-logo{font-size:28px;font-weight:700;background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 14px;letter-spacing:1px}
+.hero-info{flex:1}
+.hero-title{font-size:17px;font-weight:500}
+.hero-sub{font-size:12px;opacity:.75;margin-top:3px}
+.hero-badges{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.hero-badge{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.15);font-weight:500}
+
+.tabs{display:flex;gap:0;margin-bottom:1.25rem;border:0.5px solid var(--bd2);border-radius:10px;overflow:hidden}
+.tab{flex:1;padding:8px 6px;font-size:12px;font-weight:500;text-align:center;cursor:pointer;background:var(--bg2);color:var(--tx2);border:none;transition:all .15s}
+.tab.on{background:var(--bg);color:var(--tx);box-shadow:inset 0 -2px 0 #0050A0}
+.tab:not(:last-child){border-right:0.5px solid var(--bd)}
+
+.search-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.srch{flex:1;min-width:150px;padding:7px 12px;font-size:13px;border:0.5px solid var(--bd2);border-radius:8px;background:var(--bg2);color:var(--tx)}
+.srch:focus{outline:none;border-color:var(--bd3)}
+.frow{display:flex;gap:5px;flex-wrap:wrap}
+.fchip{padding:4px 11px;font-size:12px;border-radius:20px;border:0.5px solid var(--bd2);background:transparent;color:var(--tx2);cursor:pointer;font-weight:500;transition:all .15s}
+.fchip.on{background:var(--tx);color:var(--bg);border-color:transparent}
+
+.stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.25rem}
+.stat{background:var(--bg2);border-radius:8px;padding:9px 10px;text-align:center}
+.stat-n{font-size:19px;font-weight:500;color:var(--tx)}
+.stat-l{font-size:11px;color:var(--tx2);margin-top:1px}
+
+.overall-bar{background:var(--bg2);border-radius:10px;padding:12px 16px;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
+.ov-label{font-size:12px;color:var(--tx2);min-width:110px}
+.ov-bar{flex:1;height:8px;background:var(--bd);border-radius:4px;overflow:hidden}
+.ov-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#0050A0,#0088CC);transition:width .4s}
+.ov-pct{font-size:13px;font-weight:500;color:#0050A0;min-width:36px;text-align:right}
+
+/* domains tab */
+.domains-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:1rem}
+.domain-card{border-radius:10px;padding:14px 16px;border:0.5px solid var(--bd)}
+.domain-pct{font-size:28px;font-weight:500;margin-bottom:2px}
+.domain-name{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:4px}
+.domain-desc{font-size:12px;color:var(--tx2);line-height:1.45}
+.domain-bar{height:4px;border-radius:2px;margin-top:8px;background:var(--bd)}
+.domain-fill{height:100%;border-radius:2px}
+
+/* resources tab */
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.res-card{background:var(--bg2);border-radius:10px;padding:14px 16px;border:0.5px solid var(--bd)}
+.res-type{font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:8px}
+.res-name{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:3px}
+.res-desc{font-size:12px;color:var(--tx2);line-height:1.45}
+
+/* exam tips tab */
+.tip-list{display:flex;flex-direction:column;gap:8px}
+.tip-card{background:var(--bg2);border-radius:10px;padding:13px 15px;border-left:3px solid #0050A0;display:flex;gap:10px;align-items:flex-start}
+.tip-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.tip-title{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px}
+.tip-desc{font-size:12px;color:var(--tx2);line-height:1.45}
+
+/* roadmap tab */
+.phase-nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1.25rem}
+.pnav{padding:5px 10px;font-size:12px;border-radius:6px;border:0.5px solid var(--bd2);background:transparent;color:var(--tx2);cursor:pointer;font-weight:500;transition:all .15s;white-space:nowrap}
+.pnav.on{color:#fff;border-color:transparent}
+.phase-block{margin-bottom:1.25rem}
+.phase-hdr{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;margin-bottom:8px;cursor:pointer;user-select:none;transition:opacity .15s}
+.phase-hdr:hover{opacity:.9}
+.phase-ico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;color:#fff}
+.phase-info{flex:1;min-width:0}
+.phase-name{font-size:14px;font-weight:500}
+.phase-meta{font-size:11px;margin-top:1px;opacity:.75}
+.phase-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.mini-bar{width:70px;height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.mini-fill{height:100%;border-radius:2px;transition:width .3s}
+.mini-pct{font-size:11px;color:var(--tx2);min-width:26px;text-align:right}
+.chev{font-size:11px;color:var(--tx3);transition:transform .2s}
+.chev.open{transform:rotate(90deg)}
+.topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:8px;padding-bottom:4px}
+.tc{background:var(--bg);border:0.5px solid var(--bd);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .15s,transform .12s,box-shadow .15s}
+.tc:hover{border-color:var(--bd2);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tc.done{border-left:3px solid var(--green)}
+.tc.hidden{display:none}
+.tc.exam{border-top:2px solid var(--gold)}
+.tc-top{padding:11px 13px 7px;display:flex;gap:8px;align-items:flex-start}
+.tc-chk{width:17px;height:17px;border-radius:4px;border:0.5px solid var(--bd2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s;margin-top:1px}
+.done .tc-chk{background:var(--green);border-color:var(--green);color:#fff}
+.tc-body{flex:1;min-width:0}
+.tc-title{font-size:13px;font-weight:500;color:var(--tx);line-height:1.3}
+.tc-desc{font-size:12px;color:var(--tx2);margin-top:3px;line-height:1.45}
+.tc-badges{padding:0 13px 8px;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500;white-space:nowrap}
+.bd-b{background:#E6F1FB;color:#0C447C}
+.bd-i{background:#FAEEDA;color:#633806}
+.bd-a{background:#FCEBEB;color:#501313}
+.bd-lab{background:#E1F5EE;color:#085041}
+.bd-teo{background:#EEEDFE;color:#3C3489}
+.bd-con{background:#FAECE7;color:#712B13}
+.bd-hrs{background:var(--bg3);color:var(--tx2)}
+.bd-exam{background:#FEF3CD;color:#7A5300}
+.tc-cmds{padding:0 13px 9px}
+.cmds-lbl{font-size:11px;color:var(--tx3);margin-bottom:4px}
+.cmd-row{display:flex;flex-wrap:wrap;gap:4px}
+.cmd{font-size:11px;padding:2px 8px;border-radius:5px;background:var(--bg2);color:var(--tx2);border:0.5px solid var(--bd);font-family:monospace}
+.tc-subs{padding:0 13px 10px;border-top:0.5px solid var(--bd);margin-top:2px}
+.subs-lbl{font-size:11px;color:var(--tx3);margin:7px 0 5px}
+.sub-row{font-size:12px;color:var(--tx2);padding:2px 0;display:flex;gap:6px;align-items:flex-start;line-height:1.4}
+.sub-dot{width:3px;height:3px;border-radius:50%;background:var(--bd2);flex-shrink:0;margin-top:6px}
+.tc-exam-tip{padding:7px 13px 10px;background:#FFFBEF;border-top:0.5px solid #F0D980;display:flex;gap:7px;align-items:flex-start}
+.exam-tip-ico{font-size:13px;flex-shrink:0}
+.exam-tip-txt{font-size:12px;color:#7A5300;line-height:1.45}
+
+.cert-next{background:var(--bg2);border-radius:10px;padding:14px 16px;margin-top:1.5rem}
+.cert-title{font-size:13px;font-weight:500;color:var(--tx2);margin-bottom:10px}
+.cert-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--bd)}
+.cert-row:last-child{border-bottom:none}
+.cert-name{font-size:13px;color:var(--tx);flex:1}
+</style>
+</head>
+<body>
+<div class="rw">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo">CCNA</div>
+  <div class="hero-info">
+    <div class="hero-title">Cisco CCNA 200-301 — Roadmap Completo</div>
+    <div class="hero-sub">Exame: 120 min · ~100 questões · Score mínimo: ~825/1000 · Válido por 3 anos</div>
+    <div class="hero-badges">
+      <span class="hero-badge">8 fases</span>
+      <span class="hero-badge">+90 tópicos</span>
+      <span class="hero-badge">~20–26 semanas</span>
+      <span class="hero-badge">+300 comandos IOS</span>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" onclick="switchTab('roadmap',this)">📍 Roadmap</button>
+  <button class="tab" onclick="switchTab('domains',this)">📊 Domínios</button>
+  <button class="tab" onclick="switchTab('resources',this)">📚 Recursos</button>
+  <button class="tab" onclick="switchTab('tips',this)">💡 Dicas de prova</button>
+</div>
+
+<!-- ROADMAP TAB -->
+<div id="tab-roadmap">
+  <div class="overall-bar">
+    <span class="ov-label">Progresso geral</span>
+    <div class="ov-bar"><div class="ov-fill" id="ov-fill" style="width:0%"></div></div>
+    <span class="ov-pct" id="ov-pct">0%</span>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-n" id="st-tot">0</div><div class="stat-l">tópicos</div></div>
+    <div class="stat"><div class="stat-n" id="st-dn">0</div><div class="stat-l">concluídos</div></div>
+    <div class="stat"><div class="stat-n" id="st-hrs">0h</div><div class="stat-l">horas estudadas</div></div>
+    <div class="stat"><div class="stat-n" id="st-rem">0h</div><div class="stat-l">horas restantes</div></div>
+    <div class="stat"><div class="stat-n" id="st-wks">~23</div><div class="stat-l">semanas</div></div>
+  </div>
+  <div class="search-bar">
+    <input class="srch" id="srch" placeholder="Buscar tópico, comando IOS, protocolo..." oninput="applyFilters()">
+  </div>
+  <div class="frow" id="frow" style="margin-bottom:1rem"></div>
+  <div class="phase-nav" id="pnav"></div>
+  <div id="content"></div>
+  <div class="cert-next" id="cert-box"></div>
+</div>
+
+<!-- DOMAINS TAB -->
+<div id="tab-domains" style="display:none">
+  <p style="font-size:13px;color:var(--tx2);margin-bottom:1rem">Pesos oficiais do exame CCNA 200-301. Priorize os domínios de maior peso na sua revisão final.</p>
+  <div class="domains-grid" id="domains-grid"></div>
+</div>
+
+<!-- RESOURCES TAB -->
+<div id="tab-resources" style="display:none">
+  <p style="font-size:13px;color:var(--tx2);margin-bottom:1rem">Materiais selecionados por tipo — do estudo teórico aos labs práticos.</p>
+  <div class="res-grid" id="res-grid"></div>
+</div>
+
+<!-- TIPS TAB -->
+<div id="tab-tips" style="display:none">
+  <p style="font-size:13px;color:var(--tx2);margin-bottom:1rem">Estratégias para maximizar sua pontuação no dia do exame.</p>
+  <div class="tip-list" id="tip-list"></div>
+</div>
+
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const DOMAINS=[
+  {name:"Network Fundamentals",pct:20,color:"#0050A0",desc:"Modelos OSI/TCP-IP, Ethernet, IPv4/IPv6, WLAN, cabeamento"},
+  {name:"Network Access",pct:20,color:"#0F6E56",desc:"VLANs, STP, EtherChannel, 802.11, AP/WLC"},
+  {name:"IP Connectivity",pct:25,color:"#854F0B",desc:"Roteamento estático, OSPFv2, IPv6 routing — MAIOR PESO"},
+  {name:"IP Services",pct:10,color:"#534AB7",desc:"NAT, NTP, DHCP, DNS, SNMP, Syslog, QoS"},
+  {name:"Security Fundamentals",pct:15,color:"#993C1D",desc:"ACLs, port security, AAA, VPN, DHCP snooping"},
+  {name:"Automation & Programmability",pct:10,color:"#444441",desc:"SDN, REST API, Ansible, JSON, Python básico"},
+];
+
+const RESOURCES=[
+  {type:"Livro",tb:"#E6F1FB",tc:"#0C447C",name:"CCNA 200-301 Official Cert Guide Vol.1 & 2",desc:"Wendell Odom — a bíblia oficial. Ler do início ao fim, fazendo os review questions."},
+  {type:"Vídeo",tb:"#E1F5EE",tc:"#085041",name:"Jeremy's IT Lab (YouTube)",desc:"Série CCNA completa e gratuita, 200+ vídeos, com labs no Packet Tracer. O melhor recurso free."},
+  {type:"Lab",tb:"#FAEEDA",tc:"#633806",name:"Cisco Packet Tracer",desc:"Simulador oficial e gratuito (via NetAcad). Suficiente para 95% dos labs do CCNA."},
+  {type:"Lab",tb:"#FAEEDA",tc:"#633806",name:"GNS3 / CML",desc:"Emuladores com IOS real. GNS3 free, CML pago. Para quem quer experiência mais próxima do real."},
+  {type:"Simulado",tb:"#EEEDFE",tc:"#3C3489",name:"Boson ExSim-Max for CCNA",desc:"O simulado mais fiel ao exame real. Pago (~$90). Use nas últimas 4 semanas."},
+  {type:"Simulado",tb:"#EEEDFE",tc:"#3C3489",name:"Pearson Test Prep (OCG)",desc:"Incluído com o livro oficial. Banco de questões extenso com explicações detalhadas."},
+  {type:"Curso",tb:"#F1EFE8",tc:"#444441",name:"Cisco NetAcad CCNA 1-3",desc:"Cursos gratuitos da Cisco com Packet Tracer integrado. Cobre todo o conteúdo do exame."},
+  {type:"Curso",tb:"#F1EFE8",tc:"#444441",name:"CBT Nuggets / Udemy (Neil Anderson)",desc:"Cursos pagos com excelente didática. Neil Anderson no Udemy é muito bem avaliado."},
+  {type:"Site",tb:"#FAECE7",tc:"#712B13",name:"subnettingpractice.com",desc:"Praticar subnetting cronometrado até fazer em menos de 30 segundos por questão."},
+  {type:"Flashcard",tb:"#EAF3DE",tc:"#27500A",name:"Anki — baralhos CCNA",desc:"Memorizar comandos IOS, protocolos e conceitos com spaced repetition. Baralhos prontos no AnkiWeb."},
+  {type:"Lab",tb:"#FAEEDA",tc:"#633806",name:"Cisco DevNet Sandbox",desc:"Labs cloud da Cisco gratuitos para praticar automação e APIs. Acesso pelo developer.cisco.com."},
+];
+
+const TIPS=[
+  {ico:"⏱️",title:"Gerencie o tempo por tipo de questão",desc:"Múltipla escolha: ~60–70 seg cada. Drag-and-drop: ~90 seg. Simulações de CLI (sim questions): até 10 min. Se travar numa sim question, pule e volte — não vale perder 15 min numa questão."},
+  {ico:"🎯",title:"Subnetting em menos de 30 segundos",desc:"É cobrado intensamente. Treine o método da tabela de potências de 2 até ser automático. Sites como subnettingpractice.com têm exercícios cronometrados. Mirar 30 segundos por questão de subnet."},
+  {ico:"📋",title:"Use o quadro branco virtual do exame",desc:"O Pearson VUE oferece um quadro branco digital. Use para calcular subnets, desenhar topologias das sim questions e anotar o que não pode esquecer antes de começar as questões."},
+  {ico:"🔍",title:"Leia TODAS as opções antes de marcar",desc:"Questões CCNA costumam ter 2 opções 'quase certas'. A diferença está num detalhe — native VLAN, wildcard mask, modo de porta. Não marque na primeira opção que parecer correta."},
+  {ico:"🖥️",title:"Nas sim questions: show antes de configurar",desc:"Nas simulações de troubleshooting, execute show commands primeiro para mapear o problema. Nunca configure às cegas. show ip interface brief, show vlan brief e show ip route são os primeiros."},
+  {ico:"🔄",title:"Diferença sutil: shutdown vs err-disabled",desc:"Porta em administratively down = shutdown manual. Porta err-disabled = desligada automaticamente (port-security, BPDU guard etc.). Recuperação: errdisable recovery ou shutdown + no shutdown."},
+  {ico:"📌",title:"OSI Layer questions: a armadilha das camadas",desc:"'Em qual camada o switch opera?' — L2. 'E um switch L3?' — L2 e L3. 'Um roteador?' — L3. Questões de camada OSI são presença garantida. Saber o que cada dispositivo e protocolo opera."},
+  {ico:"💡",title:"ACL: posicionamento é tudo",desc:"Standard ACL (filtra só origem) → posicionar perto do DESTINO. Extended ACL (filtra src+dst+porta) → posicionar perto da ORIGEM. Errar isso é errar a questão inteira."},
+  {ico:"🌐",title:"IPv6 não é opcional",desc:"20%+ das questões envolvem IPv6 indiretamente. Saber abreviar/expandir endereços, EUI-64, SLAAC e configurar OSPFv3/rota estática IPv6. Candidatos que ignoram IPv6 perdem pontos fáceis."},
+  {ico:"🧪",title:"Estude com output real de show commands",desc:"O exame mostra outputs de show commands e pede para interpretar. Familiarize-se com o formato exato do show ip route, show spanning-tree, show ip ospf neighbor. Não apenas decorar — entender cada campo."},
+  {ico:"📅",title:"Agende com data definida",desc:"Sem data marcada, o estudo fica indefinido. Marque o exame quando estiver atingindo 80%+ nos simulados. A data cria urgência real. Pearson VUE permite reagendamento com 24h de antecedência."},
+  {ico:"🔁",title:"Revisão espaçada nas últimas 2 semanas",desc:"Semana -2: revisar pontos fracos com simulados por domínio. Semana -1: simulados completos cronometrados todos os dias. Dia anterior: revisar flashcards leves, nada novo. Dormir bem — cansaço mata a prova."},
+];
+
+const D=[
+  {id:0,name:"Fundamentos de redes",weeks:"2–3",hrs:30,color:"#0050A0",light:"#E6F1FB",tc:"#003070",
+   desc:"Base teórica obrigatória — 20% do exame",
+   topics:[
+    {t:"Modelos OSI e TCP/IP",d:"b",y:"teo",hrs:4,exam:true,etip:"O exame AMA perguntar em qual camada OSI cada protocolo/dispositivo opera. Memorize: switch=L2, roteador=L3, firewall=L3-L7.",
+     desc:"7 camadas OSI, 4 camadas TCP/IP, encapsulamento, PDUs, mapeamento entre modelos e protocolos",
+     cmds:[],
+     sub:["Camadas OSI: Physical, Data Link, Network, Transport, Session, Presentation, Application","PDUs por camada: bits (L1), frame (L2), packet (L3), segment (L4), data (L5-L7)","TCP/IP 4 camadas: Network Access, Internet, Transport, Application","Encapsulamento: cada camada adiciona header (e trailer no L2)","Mapear protocolos: HTTP/DNS/DHCP=L7, TCP/UDP=L4, IP/ICMP=L3, Ethernet/802.11=L2"]},
+    {t:"Endereçamento IPv4 & subnetting",d:"i",y:"lab",hrs:8,exam:true,etip:"Subnetting é o tópico mais cobrado do exame. Espere 10-15 questões. Treine até fazer em <30 segundos.",
+     desc:"Classes, CIDR, VLSM, cálculo rápido de subnets, hosts por subnet, endereços especiais, supernetting",
+     cmds:["show ip interface brief","show interfaces","ping 10.0.0.1","ping 10.0.0.1 repeat 100","traceroute 10.0.0.1"],
+     sub:["Magic number: 256 – máscara do octeto interessante = tamanho do bloco","/24=256h, /25=128h, /26=64h, /27=32h, /28=16h, /29=8h, /30=4h, /31=2h, /32=1h","VLSM: subnet maior primeiro, alocar do maior bloco necessário para o menor","Endereços especiais: 127.0.0.1 loopback, 169.254.x.x APIPA, 255.255.255.255 limited broadcast","Privados RFC1918: 10/8, 172.16-31/12, 192.168/16 — saber de cor"]},
+    {t:"IPv6 completo",d:"i",y:"lab",hrs:5,exam:true,etip:"IPv6 é 'dinheiro fácil' ignorado por muitos candidatos. Domine abreviação e EUI-64 para garantir pontos.",
+     desc:"Formato, tipos de endereço, EUI-64, SLAAC, DHCPv6, NDP, diferenças do IPv4",
+     cmds:["ipv6 unicast-routing","ipv6 address 2001:db8::1/64","ipv6 address autoconfig","show ipv6 interface brief","show ipv6 neighbors","show ipv6 route","ping ipv6 fe80::1 source g0/0"],
+     sub:["Abreviação: remover zeros à esquerda + substituir grupos 0000 consecutivos por ::  (só uma vez)","Global Unicast 2000::/3, Link-Local FE80::/10, Loopback ::1, Multicast FF00::/8","EUI-64: divide MAC em 2 partes, insere FFFE no meio, inverte bit 7 (OUI)","SLAAC: RA do roteador fornece prefixo /64, host gera Interface ID com EUI-64 ou Random","NDP substitui ARP: Neighbor Solicitation/Advertisement, Router Solicitation/Advertisement"]},
+    {t:"TCP vs UDP — transporte",d:"b",y:"teo",hrs:3,exam:true,etip:"Saber qual protocolo usa TCP e qual usa UDP é frequentemente cobrado. Ex: DNS usa UDP 53 mas TCP 53 para zone transfer.",
+     desc:"Three-way handshake, controle de fluxo, windowing, port numbers, confiabilidade, multiplexação",
+     cmds:["show tcp brief","show udp brief"],
+     sub:["TCP three-way handshake: SYN → SYN-ACK → ACK","TCP: confiável, orientado a conexão, controle de fluxo, retransmissão, ordered delivery","UDP: não confiável, sem conexão, baixa latência — voz, vídeo, DNS, DHCP","Portas TCP comuns: FTP 20/21, SSH 22, Telnet 23, SMTP 25, HTTP 80, HTTPS 443","Portas UDP comuns: DNS 53, DHCP 67/68, TFTP 69, SNMP 161/162, NTP 123"]},
+    {t:"Ethernet & switched LAN",d:"b",y:"teo",hrs:3,exam:false,etip:"",
+     desc:"MAC addresses, frames, CSMA/CD, half/full duplex, auto-negotiation, colisões, domínios de broadcast",
+     cmds:["show mac address-table","show mac address-table dynamic","show mac address-table count","show interfaces status","show interfaces g0/0","show version"],
+     sub:["Frame Ethernet II: Dst MAC (6B), Src MAC (6B), Type (2B), Data (46-1500B), FCS (4B)","Switch aprende MACs: vê src MAC no frame, associa à porta na CAM table","Flooding: destino desconhecido → envia para todas as portas exceto a de origem","Domínio de colisão: por porta em switch. Domínio de broadcast: por VLAN","Auto-MDIX: elimina necessidade de cabo crossover em equipamentos modernos"]},
+    {t:"ARP, ICMP & protocolos auxiliares",d:"b",y:"lab",hrs:3,exam:false,etip:"",
+     desc:"Funcionamento de ARP, ARP table, gratuitous ARP, ICMP types, TTL, DHCP DORA, DNS resolução",
+     cmds:["show arp","clear arp-cache","ping 10.0.0.1","ping 10.0.0.1 size 1500","traceroute 10.0.0.1","debug arp","debug ip icmp"],
+     sub:["ARP: broadcast L2 para descobrir MAC de um IP conhecido na mesma subnet","Gratuitous ARP: host anuncia seu próprio MAC — usado por FHRP e para detectar conflito","ICMP Type 0=Echo Reply, 8=Echo Request, 11=TTL Exceeded, 3=Unreachable","TTL: decrementado em 1 a cada roteador. Quando chega a 0, descarta e envia ICMP Type 11","Proxy ARP: roteador responde ARP em nome de hosts em outras subnets (geralmente desabilitar)"]},
+  ]},
+  {id:1,name:"Switching & VLANs",weeks:"3–4",hrs:35,color:"#0F6E56",light:"#E1F5EE",tc:"#074D3B",
+   desc:"Camada 2 profunda — 20% do exame (Network Access)",
+   topics:[
+    {t:"VLANs — configuração completa",d:"i",y:"lab",hrs:5,exam:true,etip:"Saber criar VLAN, associar porta de acesso e configurar trunk é garantia de questão. Teste: show vlan brief + show interfaces trunk.",
+     desc:"Criação, named VLANs, portas de acesso, voice VLAN, verificação, troubleshooting de VLAN mismatch",
+     cmds:["vlan 10","name VENDAS","interface g0/1","switchport mode access","switchport access vlan 10","switchport voice vlan 20","show vlan brief","show vlan id 10","show interfaces g0/1 switchport"],
+     sub:["VLANs por padrão: 1 (default, native), 1002-1005 (legadas, não usar)","Criar VLAN: modo global config ou modo VLAN. Nomear com 'name'","switchport mode access + switchport access vlan X: associar porta à VLAN","Voice VLAN: porta carrega dados (access VLAN) e voz (voice VLAN) simultaneamente com CoS","show interfaces switchport: mostra operational mode, access vlan, voice vlan, trunking info"]},
+    {t:"Trunking 802.1Q & DTP",d:"i",y:"lab",hrs:4,exam:true,etip:"Native VLAN mismatch = CDP warning + tráfego não taggeado vai para VLAN errada. Exame frequentemente testa isso.",
+     desc:"802.1Q encapsulation, native VLAN, allowed VLANs, DTP modes, ISL vs 802.1Q, trunking entre switches",
+     cmds:["switchport mode trunk","switchport trunk encapsulation dot1q","switchport trunk native vlan 99","switchport trunk allowed vlan 10,20,30","switchport trunk allowed vlan add 40","switchport nonegotiate","show interfaces trunk","show interfaces g0/1 trunk"],
+     sub:["802.1Q: adiciona tag de 4 bytes no frame com VLAN ID (12 bits = 4094 VLANs)","Native VLAN: tráfego sem tag no trunk — deve ser mesma VLAN nos dois lados","switchport nonegotiate: desabilita DTP — sempre usar em produção","DTP modes: dynamic auto (espera), dynamic desirable (ativa negociação), trunk, access","allowed VLANs: por padrão todas (1-4094). Restringir por segurança e eficiência"]},
+    {t:"Inter-VLAN routing",d:"i",y:"lab",hrs:4,exam:true,etip:"Questões de sim frequentemente pedem para configurar Router-on-a-Stick OU SVIs. Saber os dois.",
+     desc:"Router-on-a-Stick com subinterfaces, L3 switch com SVIs, ip routing, quando usar cada abordagem",
+     cmds:["interface g0/0.10","encapsulation dot1q 10","ip address 192.168.10.1 255.255.255.0","interface vlan 10","ip address 192.168.10.1 255.255.255.0","ip routing","show ip route","show interfaces g0/0.10"],
+     sub:["RoaS: uma interface física, N subinterfaces — encapsulation dot1q VLAN_ID","Subinterface da native VLAN: encapsulation dot1q 1 native (sem tag)","L3 switch: criar SVI (interface vlan X) + ip address + habilitar ip routing globalmente","L3 switch sem 'ip routing': SVIs existem mas não roteia — erro comum de configuração","Performance: L3 switch hardware forwarding (ASIC) >> RoaS (processo no CPU do roteador)"]},
+    {t:"Spanning Tree Protocol (STP/RSTP)",d:"i",y:"lab",hrs:6,exam:true,etip:"STP é cobrado com simulações de topologia. Saber eleger Root Bridge e identificar Root Port / Designated Port / Blocked Port.",
+     desc:"802.1D, RSTP 802.1w, PVST+, Rapid PVST+, eleição de root, port states/roles, PortFast, BPDU Guard",
+     cmds:["show spanning-tree","show spanning-tree vlan 10","show spanning-tree detail","spanning-tree mode rapid-pvst","spanning-tree vlan 10 priority 4096","spanning-tree vlan 10 root primary","spanning-tree portfast","spanning-tree bpduguard enable","spanning-tree bpduguard default","debug spanning-tree events"],
+     sub:["Root Bridge: menor Bridge ID (priority 32768+VLAN_ID + MAC). Ajustar com priority","Root Port: porta com menor custo até o Root Bridge. Cada switch não-root tem 1 RP","Designated Port: melhor porta em cada segmento para chegar ao Root. Root Bridge = todos DP","Blocked Port: todas as demais — não encaminham dados, apenas escutam BPDUs","Custos STP: 10Mbps=100, 100Mbps=19, 1Gbps=4, 10Gbps=2. RSTP: mesmos valores","PortFast: pular Listen/Learn direto para Forwarding — APENAS em portas de acesso de usuário","BPDU Guard: porta com PortFast que recebe BPDU vai para err-disabled imediatamente"]},
+    {t:"EtherChannel (LACP / PAgP)",d:"i",y:"lab",hrs:3,exam:false,etip:"",
+     desc:"Agregação de links, LACP (802.3ad), PAgP, modo estático, requisitos, load balancing, verificação",
+     cmds:["interface range g0/1 - 2","channel-group 1 mode active","channel-group 1 mode desirable","channel-group 1 mode on","interface port-channel 1","switchport mode trunk","show etherchannel summary","show etherchannel port-channel","show etherchannel 1 detail"],
+     sub:["LACP (IEEE 802.3ad): active-active ou active-passive. Active inicia negociação","PAgP (Cisco): desirable-desirable ou desirable-auto. Desirable inicia","Modo on: sem negociação — ambos lados DEVEM ser 'on', não misturar com LACP/PAgP","Requisitos iguais nos dois lados: speed, duplex, VLAN nativa, VLANs permitidas, modo STP","Load balancing: src-mac, dst-mac, src-dst-mac, src-ip, dst-ip, src-dst-ip (padrão recomendado)"]},
+    {t:"Wireless 802.11 — teoria e config",d:"i",y:"teo",hrs:4,exam:true,etip:"Foco no exame: padrões Wi-Fi (velocidades), diferença AP autônomo vs lightweight, WPA2-Personal vs Enterprise.",
+     desc:"Padrões 802.11a/b/g/n/ac/ax, frequências, canais, BSS/ESS, SSID, WLC, CAPWAP, segurança wireless",
+     cmds:["show ap summary","show ap name AP1 config general","show wlan summary","show wlan id 1","show client summary","show wireless client summary"],
+     sub:["Padrões: 802.11a(54M/5GHz), b(11M/2.4), g(54M/2.4), n(600M/2.4+5), ac(6.9G/5), ax(9.6G/2.4+5+6)","2.4 GHz: 14 canais, apenas 1/6/11 não sobrepostos. 5 GHz: 24+ canais não sobrepostos","Autonomous AP: configurado individualmente. Lightweight AP (LAP): controlado por WLC","CAPWAP: protocolo de tunelamento entre LAP e WLC (UDP 5246/5247)","WPA2-Personal: PSK (senha compartilhada). WPA2-Enterprise: 802.1X com RADIUS server","WPA3: SAE substitui PSK (mais seguro), 192-bit suite para Enterprise"]},
+    {t:"CDP & LLDP",d:"b",y:"lab",hrs:2,exam:false,etip:"",
+     desc:"Cisco Discovery Protocol e LLDP padrão — descoberta de vizinhos, segurança, habilitação seletiva",
+     cmds:["show cdp","show cdp neighbors","show cdp neighbors detail","show cdp interface","no cdp run","no cdp enable","lldp run","show lldp neighbors","show lldp neighbors detail","show lldp"],
+     sub:["CDP: Layer 2, multicast, Cisco proprietário. Envia atualizações a cada 60 seg (hold: 180s)","Informações CDP: device ID, IP address, platform, capabilities, IOS version, duplex","LLDP: padrão IEEE 802.1AB, interoperável. Comandos similares ao CDP","Desabilitar CDP em portas de borda (usuários finais, WAN): no cdp enable na interface","Usar CDP/LLDP para mapear topologia e verificar conexões antes de troubleshoot"]},
+  ]},
+  {id:2,name:"Roteamento IP",weeks:"4–5",hrs:40,color:"#854F0B",light:"#FAEEDA",tc:"#5A3507",
+   desc:"Domínio mais pesado do exame — 25% (IP Connectivity)",
+   topics:[
+    {t:"Fundamentos de roteamento",d:"b",y:"teo",hrs:4,exam:true,etip:"Saber ler a tabela de roteamento é obrigatório. O exame mostra 'show ip route' e pede para interpretar cada entrada.",
+     desc:"Routing table, Administrative Distance, métricas, longest prefix match, CEF, roteamento recursivo",
+     cmds:["show ip route","show ip route connected","show ip route static","show ip route ospf","show ip route 192.168.1.0","show ip cef","show ip cef 10.0.0.0"],
+     sub:["Leitura da tabela: C=connected, L=local, S=static, O=OSPF, R=RIP, D=EIGRP, B=BGP","Administrative Distance: Connected 0, Static 1, EIGRP 90, OSPF 110, RIP 120, Unknown 255","Longest prefix match: /30 ganha de /24 que ganha de /0 — sempre a mais específica","Roteamento recursivo: next-hop IP é resolvido por outra entrada na tabela","CEF: FIB (cópia da routing table otimizada) + Adjacency table (cache de L2 headers)"]},
+    {t:"Roteamento estático completo",d:"i",y:"lab",hrs:5,exam:true,etip:"Saber configurar static route com next-hop IP, com interface de saída, e floating static route para backup.",
+     desc:"Static routes, default route, floating static, rotas host /32, sumarização, Null0, verificação",
+     cmds:["ip route 192.168.1.0 255.255.255.0 10.0.0.2","ip route 192.168.1.0 255.255.255.0 g0/1","ip route 0.0.0.0 0.0.0.0 10.0.0.1","ip route 10.0.0.0 255.0.0.0 Null0","show ip route static","show ip route 0.0.0.0"],
+     sub:["Next-hop IP: melhor opção — router resolve recursivamente o MAC do next-hop","Interface de saída: funciona bem em serial P2P, problemático em Ethernet (entra ARP proxy)","Ambos: ip route 10.0.0.0 255.255.255.0 g0/1 10.0.0.2 — mais preciso e eficiente","Floating static: AD maior que protocolo dinâmico. Ex: ip route ... 10.0.0.2 200","Null0 route: blackhole para sumarização — previne routing loops em summary routes"]},
+    {t:"OSPFv2 single-area",d:"i",y:"lab",hrs:8,exam:true,etip:"OSPF é o roteamento mais cobrado. Saber configurar, verificar neighbor state (FULL) e troubleshoot adjacência.",
+     desc:"LSA, LSDB, SPF, Router ID, adjacência, DR/BDR, wildcard mask, passive-interface, verificação",
+     cmds:["router ospf 1","router-id 1.1.1.1","network 10.0.0.0 0.0.0.255 area 0","passive-interface g0/0","passive-interface default","no passive-interface g0/1","show ip ospf","show ip ospf neighbor","show ip ospf neighbor detail","show ip ospf interface","show ip ospf interface brief","show ip ospf database","clear ip ospf process"],
+     sub:["Processo de adjacência: Down→Init→2-Way→ExStart→Exchange→Loading→Full","DR/BDR election em redes broadcast: highest priority (default 1) → highest Router ID","Router ID: loopback mais alta > interface física mais alta > manual (sempre configurar manualmente)","Wildcard mask: inverso da subnet mask. /24=0.0.0.255, /30=0.0.0.3, /32=0.0.0.0","passive-interface: inclui a rede no OSPF mas não envia Hellos — usar em redes de usuários","Hello timer default: 10s em broadcast, 30s em NBMA. Dead = 4x Hello"]},
+    {t:"OSPFv2 — tuning e troubleshooting",d:"a",y:"lab",hrs:5,exam:true,etip:"MTU mismatch é a causa mais comum de OSPF travado em EXSTART/EXCHANGE — ip mtu 1500 nas interfaces.",
+     desc:"Custo, reference bandwidth, autenticação MD5, network types, summarization, redistribuição básica",
+     cmds:["ip ospf cost 10","auto-cost reference-bandwidth 1000","ip ospf priority 200","ip ospf hello-interval 5","ip ospf dead-interval 20","ip ospf authentication message-digest","ip ospf message-digest-key 1 md5 SENHA","area 1 range 10.0.0.0 255.255.0.0","show ip ospf neighbor","debug ip ospf adj","debug ip ospf hello"],
+     sub:["Custo padrão: 100Mbps/bandwidth. Ajustar reference: auto-cost reference-bandwidth 1000 (para Gbps)","Network types OSPF: broadcast (Ethernet), point-to-point (serial), NBMA, point-to-multipoint","Autenticação: plain-text (area 0 authentication) ou MD5 (message-digest)","Summarization inter-área: apenas no ABR. 'area 1 range' no ABR que conecta area 1 ao backbone","OSPF travado em EXSTART: verificar MTU. ip mtu 1500 + ip ospf mtu-ignore (workaround)"]},
+    {t:"Roteamento IPv6",d:"i",y:"lab",hrs:4,exam:false,etip:"",
+     desc:"ipv6 unicast-routing, static routes IPv6, OSPFv3, dual-stack, link-local como next-hop",
+     cmds:["ipv6 unicast-routing","ipv6 route 2001:db8::/32 2001:db8::1","ipv6 route ::/0 g0/1 fe80::1","ipv6 router ospf 1","router-id 1.1.1.1","show ipv6 route","show ipv6 ospf neighbor","show ipv6 protocols"],
+     sub:["ipv6 unicast-routing: habilitação global obrigatória — sem isso, roteador não encaminha IPv6","Static IPv6 com link-local next-hop: DEVE especificar interface de saída também","OSPFv3 usa link-local para Hellos e next-hops — não roteia globais diretamente","Dual-stack: interface tem IPv4 e IPv6 simultaneamente, ambos roteados de forma independente","show ipv6 route: mesma lógica do show ip route, com prefixos IPv6"]},
+    {t:"FHRP — HSRP, VRRP, GLBP",d:"i",y:"lab",hrs:4,exam:true,etip:"HSRP é o mais cobrado. Diferença HSRP vs VRRP: HSRP usa proprietary virtual MAC (0000.0c07.acXX), VRRP usa 0000.5e00.01XX.",
+     desc:"HSRP (v1/v2), VRRP (padrão IEEE), GLBP (load balancing), preemption, tracking, verificação",
+     cmds:["interface g0/0","standby 1 ip 192.168.1.1","standby 1 priority 110","standby 1 preempt","standby 1 preempt delay minimum 30","standby 1 track 1 decrement 20","standby version 2","show standby","show standby brief","track 1 interface g0/1 line-protocol"],
+     sub:["HSRP: virtual IP + virtual MAC. Active = maior priority (default 100) → maior IP","Preemption: DESABILITADO por padrão. Habilitar para que router com maior priority retome active","HSRP v2: suporta IPv6, grupos 0-4095 (v1: 0-255), MAC diferente","VRRP: padrão IEEE, master (não active), priority default 100, preemption habilitado por padrão","GLBP: ÚNICA opção que faz load balancing real — AVG elege AVFs com MACs diferentes"]},
+  ]},
+  {id:3,name:"IP Services",weeks:"2–3",hrs:20,color:"#534AB7",light:"#EEEDFE",tc:"#302080",
+   desc:"NAT, DHCP, NTP, QoS — 10% do exame",
+   topics:[
+    {t:"NAT e PAT completo",d:"i",y:"lab",hrs:5,exam:true,etip:"PAT é o mais cobrado. Saber identificar inside local, inside global, outside local, outside global numa tabela NAT.",
+     desc:"Static NAT, Dynamic NAT, PAT/NAT Overload, NAT64, inside/outside, troubleshooting",
+     cmds:["ip nat inside source static 192.168.1.10 200.0.0.1","ip nat pool PUBLICO 200.0.0.1 200.0.0.10 netmask 255.255.255.240","ip nat inside source list 1 pool PUBLICO","ip nat inside source list 1 interface g0/0 overload","ip nat inside","ip nat outside","show ip nat translations","show ip nat translations verbose","show ip nat statistics","clear ip nat translation *","debug ip nat"],
+     sub:["Inside local: IP privado do host interno. Inside global: IP público do host interno (após NAT)","Outside local: IP do destino externo visto de dentro. Outside global: IP real do destino externo","Static NAT: 1:1 permanente — necessário para servidores acessados de fora","Dynamic NAT: pool de IPs públicos — host perde tradução quando pool esgota","PAT/Overload: N:1 — porta única de destino diferencia fluxos. Mais de 60k conexões simultâneas"]},
+    {t:"DHCP no IOS",d:"b",y:"lab",hrs:3,exam:true,etip:"ip helper-address é muito cobrado. Sem ele, DHCP não funciona entre subnets diferentes.",
+     desc:"DHCP server no roteador, DHCP relay, ip helper-address, DHCP client, exclusões, conflitos",
+     cmds:["ip dhcp excluded-address 192.168.1.1 192.168.1.10","ip dhcp pool LAN","network 192.168.1.0 255.255.255.0","default-router 192.168.1.1","dns-server 8.8.8.8","lease 7","domain-name empresa.com","ip helper-address 10.0.0.1","ip address dhcp","show ip dhcp binding","show ip dhcp pool","show ip dhcp conflict","show ip dhcp server statistics","debug ip dhcp server events"],
+     sub:["Ordem CORRETA: excluir IPs ANTES de criar o pool para evitar conflitos","DORA: Discover (broadcast) → Offer (unicast/broadcast) → Request (broadcast) → Acknowledge","ip helper-address: converte broadcast DHCP em unicast para o servidor DHCP em outra subnet","DHCP snooping: camada de segurança que filtra mensagens DHCP em switches","show ip dhcp conflict: exibe IPs com conflito detectados por ping/ARP (ICMP Echo pre-allocation)"]},
+    {t:"NTP — sincronização de tempo",d:"b",y:"lab",hrs:2,exam:false,etip:"",
+     desc:"NTP server/client, stratum, master, autenticação, fuso horário, importância para logs e certificados",
+     cmds:["ntp server 216.239.35.0","ntp master 3","ntp authenticate","ntp authentication-key 1 md5 CHAVE","ntp trusted-key 1","ntp peer 10.0.0.2","show ntp status","show ntp associations","show ntp associations detail","clock set 10:00:00 26 Apr 2026","clock timezone BRT -3","clock summer-time BRST recurring"],
+     sub:["Stratum: 1=GPS/atômico, 2=sincroniza no 1, 3=sincroniza no 2... quanto menor, mais preciso","ntp master 3: torna o roteador servidor NTP stratum 3 (para rede interna sem acesso externo)","Autenticação NTP: protege contra servidores NTP falsos (MITM)","NTP crítico para: correlação de logs de segurança, certificados TLS, Kerberos, syslog timestamps","show ntp status: verificar se 'Clock is synchronized' — se não, log timestamps serão errados"]},
+    {t:"QoS — qualidade de serviço",d:"i",y:"teo",hrs:4,exam:true,etip:"Para o CCNA: saber os tipos de QoS (marcação, enfileiramento, shaping, policing) e quando usar. LLQ para voz.",
+     desc:"Marcação DSCP/CoS, classificação, enfileiramento FIFO/WFQ/CBWFQ/LLQ, shaping, policing, MQC",
+     cmds:["class-map match-all VOZ","match protocol rtp","policy-map QOS","class VOZ","priority 128","class class-default","fair-queue","service-policy output QOS","show policy-map interface","show class-map"],
+     sub:["Por que QoS: voz exige <150ms latência, <30ms jitter, <1% perda. Sem QoS, é ruim em tráfego intenso","Marcação: DSCP (IP header, 6 bits, 0-63) e 802.1p/CoS (frame Ethernet, 3 bits, 0-7)","DSCP: EF=46 (voz), AF41=34 (vídeo), AF21=18 (dados críticos), BE=0 (default/best effort)","LLQ (Low Latency Queuing): fila de prioridade estrita para voz + CBWFQ para demais classes","Policing: descarta tráfego acima do rate. Shaping: atrasa (buffering) tráfego acima do rate"]},
+    {t:"SNMP, Syslog & NetFlow",d:"b",y:"teo",hrs:3,exam:false,etip:"",
+     desc:"SNMPv2c vs v3, community strings, OIDs, MIBs, Syslog severity levels, NetFlow para monitoramento",
+     cmds:["snmp-server community PUBLICO ro","snmp-server community PRIVADO rw","snmp-server host 10.0.0.5 version 2c PUBLICO","snmp-server enable traps","snmp-server location DataCenter-SP","logging host 10.0.0.5","logging trap informational","logging buffered 64000","logging on","show logging","ip flow-export destination 10.0.0.5 9999","ip flow-export version 9","show ip cache flow"],
+     sub:["SNMP v2c: community string em texto claro — apenas para leitura em redes isoladas","SNMP v3: noAuthNoPriv, authNoPriv, authPriv (MD5/SHA + AES/DES) — usar sempre v3","Syslog levels: 0=Emergencies, 1=Alerts, 2=Critical, 3=Errors, 4=Warnings, 5=Notices, 6=Info, 7=Debug","logging trap informational: envia level 0-6 para servidor syslog externo","NetFlow: coleta metadados de fluxos IP — src/dst IP, ports, protocol, bytes, packets"]},
+    {t:"SSH & gerenciamento seguro",d:"b",y:"lab",hrs:3,exam:true,etip:"Configurar SSH é simulação clássica. Saber a sequência: domínio → chave RSA → usuário → VTY transport input ssh.",
+     desc:"Configurar SSH v2, desabilitar Telnet, RSA keys, usuários locais, exec-timeout, logging synchronous",
+     cmds:["hostname R1","ip domain-name empresa.com","crypto key generate rsa modulus 2048","ip ssh version 2","ip ssh time-out 60","ip ssh authentication-retries 3","username admin privilege 15 algorithm-type scrypt secret SENHA","line vty 0 4","login local","transport input ssh","exec-timeout 5 0","logging synchronous","line console 0","exec-timeout 10 0","password CONS","login"],
+     sub:["Sequência obrigatória SSH: hostname + ip domain-name → crypto key generate rsa","RSA 2048 bits mínimo. SSH v2 requer mínimo 768 bits, mas usar 2048","transport input ssh: bloqueia Telnet. transport input none: bloqueia tudo (break glass!)","login local: usa banco de usuários local (username/password) nas VTYs","privilege level 15: acesso direto ao enable mode sem precisar de 'enable'"]},
+  ]},
+  {id:4,name:"Segurança de redes",weeks:"2–3",hrs:25,color:"#993C1D",light:"#FAECE7",tc:"#601A08",
+   desc:"Security Fundamentals — 15% do exame",
+   topics:[
+    {t:"ACLs Standard & Extended",d:"i",y:"lab",hrs:6,exam:true,etip:"ACL é simulação garantida. Ponto crítico: Standard ACL perto do destino, Extended perto da origem.",
+     desc:"ACL numbered/named, wildcard mask, posicionamento, sequencing, edição de ACL named, verificação",
+     cmds:["access-list 10 permit 192.168.1.0 0.0.0.255","access-list 10 deny any","access-list 100 permit tcp 192.168.1.0 0.0.0.255 host 10.0.0.1 eq 80","access-list 100 permit tcp 192.168.1.0 0.0.0.255 host 10.0.0.1 eq 443","access-list 100 deny ip any any log","interface g0/1","ip access-group 100 in","ip access-group 10 out","ip access-list extended FIREWALL","10 permit tcp 192.168.1.0 0.0.0.255 any eq 80","no 10","show access-lists","show ip interface g0/1"],
+     sub:["Implicit deny any: ao final de toda ACL. Para permitir tudo no final: permit ip any any","Wildcard mask: bits 0 = deve ser igual, bits 1 = qualquer. host X = 0.0.0.0, any = 255.255.255.255","Standard ACL: só IP de origem. Colocar perto do DESTINO para não bloquear demais","Extended ACL: src IP, dst IP, protocolo, porta src, porta dst. Colocar perto da ORIGEM","Named ACL: permite edição de linhas específicas. ip access-list extended NOME + número de linha"]},
+    {t:"Port Security",d:"i",y:"lab",hrs:4,exam:true,etip:"Lembrar: port-security funciona apenas em portas de acesso (modo access). Modo trunk não suporta.",
+     desc:"Sticky learning, maximum MACs, violation modes, aging, err-disabled recovery, verificação",
+     cmds:["interface g0/1","switchport mode access","switchport port-security","switchport port-security maximum 2","switchport port-security mac-address sticky","switchport port-security mac-address 0050.7966.6800","switchport port-security violation shutdown","switchport port-security aging time 30","switchport port-security aging type inactivity","errdisable recovery cause psecure-violation","errdisable recovery interval 300","show port-security","show port-security interface g0/1","show port-security address"],
+     sub:["Violation modes: shutdown (err-disabled + log + SNMP trap), restrict (drop + log + SNMP), protect (drop silencioso)","Sticky: aprende MACs dinamicamente e os escreve como estáticos na running-config","Porta err-disabled: shutdown → no shutdown (manual) ou errdisable recovery (automático)","Port-security aging: remover MACs aprendidos após tempo de inatividade ou absoluto","show port-security interface: mostra status, violation mode, max/current MACs, última violação"]},
+    {t:"DHCP Snooping & DAI",d:"i",y:"lab",hrs:3,exam:true,etip:"DHCP Snooping habilitar por VLAN. Portas de uplink e DHCP server = trusted. Demais = untrusted.",
+     desc:"Rogue DHCP prevention, DHCP binding table, DAI (Dynamic ARP Inspection), rate limiting",
+     cmds:["ip dhcp snooping","ip dhcp snooping vlan 10,20","no ip dhcp snooping information option","interface g0/1","ip dhcp snooping trust","ip dhcp snooping limit rate 100","ip arp inspection vlan 10,20","ip arp inspection trust","ip arp inspection limit rate 100","show ip dhcp snooping","show ip dhcp snooping binding","show ip arp inspection","show ip arp inspection interfaces"],
+     sub:["DHCP Snooping: bloqueia mensagens DHCP Offer/Ack em portas untrusted (apenas server pode oferecer)","no ip dhcp snooping information option: necessário quando relay agent (ip helper-address) está em uso","Binding table: {MAC, IP, VLAN, Interface, Lease time} — base de dados confiável para DAI","DAI valida ARP contra binding table — descarta ARPs com MAC/IP inconsistentes (anti-ARP spoofing)","Portas uplink/trunk: ip dhcp snooping trust E ip arp inspection trust"]},
+    {t:"AAA & 802.1X",d:"i",y:"teo",hrs:4,exam:true,etip:"RADIUS vs TACACS+: lembrar RADIUS é UDP e criptografa só a senha. TACACS+ é TCP e criptografa tudo.",
+     desc:"AAA new-model, RADIUS, TACACS+, local fallback, 802.1X (Supplicant/Auth/Auth Server), EAP",
+     cmds:["aaa new-model","aaa authentication login default group radius local","aaa authentication login VTY_AUTH group tacacs+ local","aaa authorization exec default group tacacs+ local","aaa accounting exec default start-stop group tacacs+","radius server SERVIDOR","address ipv4 10.0.0.5 auth-port 1812 acct-port 1813","key SEGREDO","tacacs server TACACSSVR","address ipv4 10.0.0.5","show aaa servers","show aaa sessions"],
+     sub:["RADIUS: UDP 1812 (auth), 1813 (accounting). Criptografa apenas a senha. Comum em wireless","TACACS+: TCP 49. Criptografa o pacote inteiro. Separação de AAA. Preferido para gestão de rede","local: fallback quando servidores inacessíveis — SEMPRE incluir na lista aaa authentication","802.1X: supplicant (host) → authenticator (switch) → authentication server (RADIUS)","EAP: protocolo de autenticação flexível sobre 802.1X. Variantes: EAP-TLS, PEAP, EAP-FAST"]},
+    {t:"Hardening do dispositivo IOS",d:"b",y:"lab",hrs:3,exam:true,etip:"service password-encryption + enable secret são praticamente garantidos em questões de segurança básica.",
+     desc:"Senhas seguras, banner, privilege levels, timeout, serviços desnecessários, CoPP básico",
+     cmds:["service password-encryption","enable algorithm-type scrypt secret SENHA","no enable password","security passwords min-length 10","login block-for 120 attempts 3 within 60","banner motd ^Acesso restrito a pessoal autorizado^","no ip http server","no ip http secure-server","no cdp run","no ip source-route","no service tcp-small-servers","no service udp-small-servers","ip tcp intercept list 100","show users","show privilege"],
+     sub:["enable secret (SCRYPT > MD5 > plaintext). Nunca usar 'enable password' se secret está configurado","service password-encryption: Type 7 — reversível, fraca. Melhor que nada mas não é segurança real","login block-for: bloqueia login após N tentativas em X segundos — anti brute-force","Desabilitar: ip http server (HTTP GUI), CDP nas bordas, finger, ip source-route, small servers","banner motd: aviso legal ANTES do login. banner login: após conectar. banner exec: após autenticar"]},
+    {t:"VPN & IPSec fundamentos",d:"i",y:"teo",hrs:3,exam:false,etip:"",
+     desc:"IPSec phases, IKE, AH vs ESP, site-to-site, remote access, SSL VPN, GRE tunnels",
+     cmds:["interface tunnel 0","tunnel source g0/0","tunnel destination 200.0.0.2","ip address 172.16.0.1 255.255.255.252","tunnel mode gre ip","show interfaces tunnel 0","show crypto isakmp sa","show crypto ipsec sa","show crypto map"],
+     sub:["GRE: Generic Routing Encapsulation — encapsula qualquer protocolo em IP, sem criptografia","GRE + IPSec: combinar para criar VPN site-to-site com criptografia","IPSec IKE Phase 1: negocia parâmetros e cria ISAKMP SA (canal seguro de controle)","IPSec IKE Phase 2: negocia IPSec SA (canal para dados) usando Phase 1 como proteção","AH: apenas integridade. ESP: integridade + confidencialidade. ESP é o usado na prática"]},
+  ]},
+  {id:5,name:"Automação & SDN",weeks:"1–2",hrs:12,color:"#444441",light:"#F1EFE8",tc:"#2C2C2A",
+   desc:"Automation & Programmability — 10% do exame",
+   topics:[
+    {t:"SDN e arquitetura de rede",d:"i",y:"teo",hrs:3,exam:true,etip:"Para o exame: saber diferenciar data plane, control plane e management plane. E o que SDN muda em cada.",
+     desc:"Plano de controle, dados e gestão, centralização via controller, Cisco DNA Center, SD-Access, IBN",
+     cmds:[],
+     sub:["Data plane (forwarding): forwarding de pacotes baseado na FIB/CAM — hardware, linha de velocidade","Control plane: calcula rotas, popula a FIB/CAM — OSPF, STP, ARP. CPU do dispositivo","Management plane: SSH, SNMP, RESTCONF — gestão e configuração do dispositivo","SDN: separa controle do hardware e centraliza no controller. Dispositivos ficam 'burros'","Cisco DNA Center: controller central para SD-Access. Automação, assurance, policy, SDA fabric"]},
+    {t:"REST APIs & formatos de dados",d:"i",y:"teo",hrs:3,exam:true,etip:"O exame mostra snippets de JSON e XML e pede para interpretar. Praticar leitura de JSON é suficiente.",
+     desc:"HTTP methods, status codes, autenticação, JSON vs XML vs YAML, headers, Postman",
+     cmds:[],
+     sub:["CRUD via HTTP: Create=POST, Read=GET, Update=PUT/PATCH, Delete=DELETE","Status codes: 2xx=sucesso (200 OK, 201 Created), 3xx=redirect, 4xx=client error, 5xx=server error","JSON: {chave: valor}, arrays com [], objetos aninhados com {}. Saber ler e identificar estruturas","XML: tags hierárquicas <tag>valor</tag>. Mais verboso que JSON. Usado no NETCONF","Autenticação em APIs: Basic (base64 user:pass), Token (Bearer em header), OAuth2"]},
+    {t:"Ferramentas de automação",d:"i",y:"teo",hrs:2,exam:true,etip:"Diferença crítica para o exame: Ansible é AGENTLESS (SSH), Puppet e Chef são AGENT-BASED.",
+     desc:"Ansible (YAML, playbooks, agentless), Puppet (manifests, agente), Chef (recipes), Terraform",
+     cmds:[],
+     sub:["Ansible: agentless (usa SSH), playbooks em YAML, push model, idempotente — favorito em redes","Puppet: agent instalado nos dispositivos, manifests em DSL própria, pull model, convergência","Chef: agent instalado, recipes/cookbooks em Ruby, pull model — curva de aprendizado maior","Terraform: IaC declarativo, providers para Cisco, AWS, GCP — gerencia infra como código","Para o exame: Ansible agentless=SSH, Puppet/Chef agent-based. Qual usa YAML? Ansible."]},
+    {t:"NETCONF, RESTCONF & YANG",d:"a",y:"teo",hrs:2,exam:false,etip:"",
+     desc:"Gerenciamento programático do IOS-XE: NETCONF (XML/SSH), RESTCONF (HTTP/JSON), modelos YANG",
+     cmds:["netconf-yang","restconf","show platform software yang-management process"],
+     sub:["NETCONF: RFC 6241, usa SSH (porta 830), payloads XML, operações get-config/edit-config/commit","RESTCONF: RFC 8040, usa HTTP/HTTPS (porta 443), JSON ou XML, mapeado sobre YANG","YANG: linguagem de modelagem de dados. Define estrutura dos dados gerenciados via NETCONF/RESTCONF","Comparação: SNMP (legado, MIB, UDP) → NETCONF/RESTCONF (moderno, YANG, SSH/HTTPS)","Cisco IOS-XE: habilitar com 'netconf-yang' e 'restconf' no global config"]},
+    {t:"Python e scripting para redes",d:"i",y:"teo",hrs:2,exam:false,etip:"",
+     desc:"Netmiko, NAPALM, Nornir, requests — conceitos e uso básico para automação de dispositivos",
+     cmds:[],
+     sub:["Python básico: strings, listas, dicionários, loops for, funções, import — essencial","Netmiko: biblioteca SSH multi-vendor. ConnectHandler, send_command, send_config_set","NAPALM: abstração multi-vendor. get_facts(), get_interfaces(), compare_config(), commit_config()","requests: biblioteca HTTP Python para consumir REST APIs. get/post/put + headers + json parsing","Para o exame: entender o conceito e para que serve cada biblioteca, não programar"]},
+  ]},
+  {id:6,name:"Troubleshooting completo",weeks:"2–3",hrs:20,color:"#3C3489",light:"#EEEDFE",tc:"#26215C",
+   desc:"Habilidade prática — simulações de troubleshoot são ~30% das questões",
+   topics:[
+    {t:"Metodologia de troubleshooting",d:"b",y:"teo",hrs:2,exam:true,etip:"O exame descreve um problema e você deve identificar a causa. Método bottom-up é o mais eficiente.",
+     desc:"Top-down, bottom-up, divide-and-conquer, shoot-from-the-hip, seguir o tráfego, baselines",
+     cmds:["show ip interface brief","show interfaces","show version","show running-config","show tech-support"],
+     sub:["Bottom-up: L1 (cabo/LED) → L2 (CDP, MAC, VLAN) → L3 (rota, ping) → L4 (porta, firewall) → App","Top-down: app → L7 → L4 → L3 → L2 → L1. Útil quando há contexto do serviço afetado","Divide-and-conquer: começar no meio (L3) e ir para cima ou baixo conforme resultado","Baseline: documentar estado normal (show output, performance) para comparar em incidentes","show tech-support: dump completo de informações — útil para escalação ao TAC Cisco"]},
+    {t:"Troubleshooting de switching",d:"i",y:"lab",hrs:4,exam:true,etip:"VLAN mismatch e STP com root bridge errado são os cenários mais comuns de sim question.",
+     desc:"VLAN mismatch, trunk não formando, STP loop, root bridge incorreto, port-security err-disabled",
+     cmds:["show vlan brief","show interfaces trunk","show interfaces g0/1 switchport","show spanning-tree","show spanning-tree vlan 10 detail","show mac address-table","show port-security interface","show errdisable recovery","show interfaces status","debug spanning-tree events"],
+     sub:["VLAN mismatch: host não pinga gateway → show vlan brief (porta está na VLAN certa?)","Trunk não formando: show interfaces trunk (empty?) → verificar DTP mode, encapsulation, native VLAN","STP Root Bridge errado: show spanning-tree → raiz deve ser o switch de distribuição, não o de acesso","STP loop: múltiplos caminhos ativos, broadcast storm. Verificar se RSTP/PVST+ está configurado","Port err-disabled: show interfaces | include err → identificar causa → remediar → reativar porta"]},
+    {t:"Troubleshooting de roteamento",d:"i",y:"lab",hrs:4,exam:true,etip:"Rota ausente ou OSPF não formando adjacência são os cenários mais cobrados em simulações.",
+     desc:"Rota ausente, OSPF travado, OSPF vizinho não formando, redistribuição, next-hop inacessível",
+     cmds:["show ip route","show ip ospf neighbor","show ip ospf interface","show ip protocols","show ip ospf database","debug ip ospf adj","debug ip ospf hello","show ip bgp summary","ping 10.0.0.1 source g0/0","traceroute 10.0.0.1"],
+     sub:["OSPF neighbor ausente: verificar hello/dead timers (devem ser iguais), area ID, autenticação, MTU","OSPF stuck em EXSTART: MTU mismatch. Solução: ip mtu 1500 ou ip ospf mtu-ignore","OSPF stuck em 2-WAY: normal em broadcast sem DR/BDR, anômalo em P2P (verificar network type)","Rota ausente: network command correto? Área certa? Interface OSPF ativa? passive-interface bloqueando?","Traceroute: mostra onde o pacote para. Comparar com show ip route para identificar rota incorreta"]},
+    {t:"Troubleshooting de serviços",d:"i",y:"lab",hrs:3,exam:false,etip:"",
+     desc:"NAT não traduzindo, DHCP sem endereço, DNS não resolvendo, NTP não sincronizando",
+     cmds:["show ip nat translations","show ip nat statistics","debug ip nat","show ip dhcp binding","show ip dhcp conflict","show ip dhcp server statistics","debug ip dhcp server events","show ntp status","show ntp associations","show hosts","nslookup"],
+     sub:["NAT vazio: inside/outside nas interfaces certas? ACL/pool corretos? Verificar show run | section nat","DHCP sem binding: pool esgotado? IPs excluídos demais? show ip dhcp pool → total bindings","DHCP conflict: host com IP estático conflitando com pool → show ip dhcp conflict → clear","DNS: no ip domain-lookup ativo? ip name-server configurado? Testar com ping para nome","NTP não sincronizando: servidor acessível? show ntp associations → * = reference, + = selected"]},
+    {t:"Troubleshooting de segurança",d:"i",y:"lab",hrs:3,exam:true,etip:"ACL bloqueando tráfego legítimo é o cenário mais comum. show access-lists revela os matches.",
+     desc:"ACL bloqueando tráfego, SSH não conecta, port-security triggered, DHCP snooping bloqueando",
+     cmds:["show access-lists","show ip interface g0/0","debug ip packet detail","debug ip packet 100 detail","show port-security interface","show ip dhcp snooping","show ip dhcp snooping statistics","show logging","show users","show line"],
+     sub:["ACL: show access-lists → ver qual linha tem matches. Verificar se está aplicada na interface/direção certa","debug ip packet: VER SE ACL EXISTE PRIMEIRO para filtrar tráfego (debug ip packet 100 detail)","SSH falha: RSA key gerada? ip ssh version 2? transport input ssh? username configurado? VTY login local?","Port-security: porta em err-disabled? show port-security interface → Last Source Address (quem violou)","DHCP snooping bloqueando ofertas legítimas: servidor DHCP na porta trusted? no information option?"]},
+    {t:"Labs práticos recomendados",d:"i",y:"lab",hrs:8,exam:false,etip:"",
+     desc:"Topologias essenciais para dominar antes do exame — fazer cada lab até configurar de memória",
+     cmds:[],
+     sub:["Lab 1: Subnetting VLSM — projetar endereçamento para 5 subnets com requisitos diferentes","Lab 2: VLANs + Trunk + RoaS — 3 VLANs, 2 switches, 1 roteador com subinterfaces","Lab 3: L3 Switch SVIs + OSPF — routing entre VLANs no switch + OSPF com roteador core","Lab 4: OSPFv2 multi-roteador — 4 roteadores, rotas estáticas + OSPF + troubleshoot adjacência","Lab 5: ACL Extended + NAT PAT + DHCP relay — topologia completa enterprise small","Lab 6: STP + RSTP + BPDU Guard — forçar root bridge + PortFast + simular falha de link","Lab 7: HSRP + tracking — redundância de gateway com failover automático"]},
+  ]},
+  {id:7,name:"Simulados & exame",weeks:"2–3",hrs:20,color:"#639922",light:"#EAF3DE",tc:"#27500A",
+   desc:"Estratégia final — simulados, revisão e dia do exame",
+   topics:[
+    {t:"Cronograma de estudo",d:"b",y:"teo",hrs:2,exam:false,etip:"",
+     desc:"Planejamento semanal das 20-26 semanas, distribuição por domínio, fases de estudo",
+     cmds:[],
+     sub:["Semanas 1-4: Fundamentos de redes + IPv4 subnetting intensivo","Semanas 5-9: Switching completo (VLANs, STP, EtherChannel, Wireless)","Semanas 10-15: Roteamento IP (Static, OSPF single + multi área, FHRP)","Semanas 16-18: IP Services + Security + Automação","Semanas 19-22: Troubleshooting + labs integradores + primeiro simulado completo","Semanas 23-26: Simulados diários + revisão de erros + flashcards + agendar exame"]},
+    {t:"Uso estratégico de simulados",d:"b",y:"teo",hrs:4,exam:false,etip:"",
+     desc:"Quando fazer, como analisar erros, evolução de score, gestão de pontos fracos",
+     cmds:[],
+     sub:["Primeiro simulado: após cobrir todos os tópicos (não antes). Serve de diagnóstico, não de treino","Frequência nas últimas semanas: 1 simulado completo por dia nas últimas 2 semanas","Análise de erros: para cada questão errada, estudar o tópico — não apenas decorar a resposta","Meta de score: atingir 85%+ consistentemente antes de agendar (exame exige ~825/1000)","Simulados por domínio: identificar domínios fracos e fazer questões específicas deles"]},
+    {t:"Banco de questões e recursos",d:"b",y:"teo",hrs:2,exam:false,etip:"",
+     desc:"Boson ExSim, Pearson Practice, MeasureUp, Jeremy's IT Lab quiz, Anki flashcards",
+     cmds:[],
+     sub:["Boson ExSim-Max: o mais fiel ao exame real. 600+ questões, sim questions, explicações detalhadas","Pearson Test Prep: incluído no OCG. Permite simulado por domínio/capítulo","Jeremy's IT Lab: quiz gratuito por seção. Ótimo para reforço ao longo do estudo","Anki CCNA decks: spaced repetition para comandos IOS, protocolos e conceitos teóricos","Evitar dump sites (braindumps) — violam NDA, levam a revogação da certificação e aprendizado falso"]},
+    {t:"Dia do exame — estratégia",d:"b",y:"teo",hrs:1,exam:false,etip:"",
+     desc:"Logística, Pearson VUE, tipos de questão, gestão de tempo, dicas de última hora",
+     cmds:[],
+     sub:["Chegar 30 min antes com 2 documentos de ID com foto","Whiteboard digital disponível — usar para subnetting e anotações das sim questions","Sequência recomendada: questões múltipla escolha primeiro, sim questions por último","Questões com múltiplas respostas: normalmente o enunciado indica 'escolha 2'. Se não indicar, escolha 1","Não há penalidade por resposta errada — nunca deixar em branco","Review mode: marcar questões duvidosas e revisar no final se sobrar tempo"]},
+  ]},
+];
+
+const CERTS=[
+  {name:"Cisco DevNet Associate — automação e APIs após o CCNA",level:"DevNet",lb:"#E1F5EE",ltc:"#085041"},
+  {name:"Cisco CCNP Enterprise (ENCOR 350-401) — próximo nível em roteamento/switching",level:"CCNP",lb:"#FAEEDA",ltc:"#633806"},
+  {name:"Cisco CCNP Security (SCOR 350-701) — especialização em segurança",level:"CCNP",lb:"#FAECE7",ltc:"#712B13"},
+  {name:"CompTIA Network+ — complemento vendor-neutral (opcional antes do CCNA)",level:"CompTIA",lb:"#EEEDFE",ltc:"#3C3489"},
+  {name:"AWS/Azure/GCP — cloud após dominar redes on-premises",level:"Cloud",lb:"#E6F1FB",ltc:"#0C447C"},
+];
+
+const FILTERS=[
+  {id:"all",label:"Todos"},
+  {id:"b",label:"Iniciante"},
+  {id:"i",label:"Intermediário"},
+  {id:"a",label:"Avançado"},
+  {id:"lab",label:"Lab/CLI"},
+  {id:"teo",label:"Teoria"},
+  {id:"exam",label:"⭐ Alta prioridade"},
+];
+
+const SK="ccna_v2";
+let doneSet=new Set(),openPhases=new Set([0]),activeFilt="all",searchQ="",curTab="roadmap";
+
+function save(){try{localStorage.setItem(SK,JSON.stringify([...doneSet]));}catch(e){}}
+function load(){try{const r=localStorage.getItem(SK);if(r){const a=JSON.parse(r);if(Array.isArray(a))return new Set(a);}}catch(e){}return new Set();}
+doneSet=load();
+
+function switchTab(id,btn){
+  curTab=id;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
+  btn.classList.add("on");
+  ["roadmap","domains","resources","tips"].forEach(t=>{
+    document.getElementById("tab-"+t).style.display=t===id?"block":"none";
+  });
+}
+
+function key(pi,ti){return pi+"-"+ti;}
+function totalTopics(){return D.reduce((s,p)=>s+p.topics.length,0);}
+function totalHrs(){return D.reduce((s,p)=>s+p.topics.reduce((ss,t)=>ss+t.hrs,0),0);}
+function doneHrs(){
+  let h=0;
+  D.forEach((p,pi)=>p.topics.forEach((t,ti)=>{if(doneSet.has(key(pi,ti)))h+=t.hrs;}));
+  return h;
+}
+
+function updateStats(){
+  const tot=totalTopics(),dn=doneSet.size,th=totalHrs(),dh=doneHrs();
+  const pct=Math.round(dn/tot*100);
+  document.getElementById("st-tot").textContent=tot;
+  document.getElementById("st-dn").textContent=dn;
+  document.getElementById("st-hrs").textContent=dh+"h";
+  document.getElementById("st-rem").textContent=(th-dh)+"h";
+  document.getElementById("ov-fill").style.width=pct+"%";
+  document.getElementById("ov-pct").textContent=pct+"%";
+  document.getElementById("st-wks").textContent="~"+D.reduce((s,p)=>{const[a,b]=p.weeks.split("–").map(Number);return s+(b||a);},0);
+}
+
+function matchF(t){
+  if(activeFilt==="all")return true;
+  if(activeFilt==="exam")return t.exam===true;
+  return t.d===activeFilt||t.y===activeFilt;
+}
+function matchS(t){
+  if(!searchQ)return true;
+  const q=searchQ.toLowerCase();
+  return (t.t+t.desc+(t.cmds||[]).join(" ")+(t.sub||[]).join(" ")).toLowerCase().includes(q);
+}
+
+function buildFilters(){
+  const w=document.getElementById("frow");w.innerHTML="";
+  FILTERS.forEach(f=>{
+    const b=document.createElement("button");
+    b.className="fchip"+(activeFilt===f.id?" on":"");
+    b.textContent=f.label;
+    b.onclick=()=>{activeFilt=f.id;applyFilters();};
+    w.appendChild(b);
+  });
+}
+
+function applyFilters(){
+  searchQ=document.getElementById("srch").value;
+  buildFilters();
+  document.querySelectorAll(".tc").forEach(card=>{
+    const pi=+card.dataset.pi,ti=+card.dataset.ti;
+    const t=D[pi].topics[ti];
+    card.classList.toggle("hidden",!matchF(t)||!matchS(t));
+  });
+  updatePhaseBars();
+}
+
+function updatePhaseBars(){
+  D.forEach((p,pi)=>{
+    const b=document.getElementById("pb-"+pi);
+    const pc=document.getElementById("pp-"+pi);
+    if(!b)return;
+    const dn=p.topics.filter((_,ti)=>doneSet.has(key(pi,ti))).length;
+    b.style.width=Math.round(dn/p.topics.length*100)+"%";
+    pc.textContent=Math.round(dn/p.topics.length*100)+"%";
+  });
+  updateStats();
+}
+
+function toggleTopic(pi,ti){
+  const k=key(pi,ti);
+  doneSet.has(k)?doneSet.delete(k):doneSet.add(k);
+  const c=document.querySelector(`.tc[data-pi="${pi}"][data-ti="${ti}"]`);
+  if(c){c.classList.toggle("done",doneSet.has(k));c.querySelector(".tc-chk").textContent=doneSet.has(k)?"✓":"";}
+  updatePhaseBars();save();
+}
+
+function buildNav(){
+  const w=document.getElementById("pnav");w.innerHTML="";
+  D.forEach((p,i)=>{
+    const b=document.createElement("button");
+    b.className="pnav"+(openPhases.has(i)?" on":"");
+    if(openPhases.has(i)){b.style.background=p.color;b.style.borderColor=p.color;b.style.color="#fff";}
+    b.textContent=(i+1)+". "+p.name;
+    b.onclick=()=>{openPhases.has(i)?openPhases.delete(i):openPhases.add(i);build();};
+    w.appendChild(b);
+  });
+}
+
+function buildCerts(){
+  const box=document.getElementById("cert-box");
+  box.innerHTML=`<div class="cert-title">Próximos passos após o CCNA</div>`+
+    CERTS.map(c=>`<div class="cert-row"><span class="badge" style="background:${c.lb};color:${c.ltc};margin-right:4px">${c.level}</span><span class="cert-name">${c.name}</span></div>`).join("");
+}
+
+function buildDomains(){
+  const g=document.getElementById("domains-grid");
+  g.innerHTML=DOMAINS.map(d=>`
+    <div class="domain-card" style="background:${d.color}18;border-color:${d.color}33">
+      <div class="domain-pct" style="color:${d.color}">${d.pct}%</div>
+      <div class="domain-name">${d.name}</div>
+      <div class="domain-desc">${d.desc}</div>
+      <div class="domain-bar"><div class="domain-fill" style="width:${d.pct*4}%;background:${d.color}"></div></div>
+    </div>`).join("");
+}
+
+function buildResources(){
+  const g=document.getElementById("res-grid");
+  g.innerHTML=RESOURCES.map(r=>`
+    <div class="res-card">
+      <span class="res-type" style="background:${r.tb};color:${r.tc}">${r.type}</span>
+      <div class="res-name">${r.name}</div>
+      <div class="res-desc">${r.desc}</div>
+    </div>`).join("");
+}
+
+function buildTips(){
+  const g=document.getElementById("tip-list");
+  g.innerHTML=TIPS.map(t=>`
+    <div class="tip-card">
+      <div class="tip-icon">${t.ico}</div>
+      <div><div class="tip-title">${t.title}</div><div class="tip-desc">${t.desc}</div></div>
+    </div>`).join("");
+}
+
+function build(){
+  buildNav();
+  const content=document.getElementById("content");content.innerHTML="";
+  D.forEach((p,pi)=>{
+    const open=openPhases.has(pi);
+    const dn=p.topics.filter((_,ti)=>doneSet.has(key(pi,ti))).length;
+    const pct=Math.round(dn/p.topics.length*100);
+    const block=document.createElement("div");block.className="phase-block";
+    const hdr=document.createElement("div");hdr.className="phase-hdr";hdr.style.background=p.light;
+    hdr.innerHTML=`
+      <div class="phase-ico" style="background:${p.color}">${pi+1}</div>
+      <div class="phase-info">
+        <div class="phase-name" style="color:${p.tc}">${p.name}</div>
+        <div class="phase-meta" style="color:${p.tc}">${p.desc} · ${p.weeks} sem · ~${p.hrs}h</div>
+      </div>
+      <div class="phase-right">
+        <div class="mini-bar"><div class="mini-fill" id="pb-${pi}" style="width:${pct}%;background:${p.color}"></div></div>
+        <span class="mini-pct" id="pp-${pi}" style="color:${p.tc}">${pct}%</span>
+        <span class="chev${open?" open":""}" style="color:${p.tc}">▶</span>
+      </div>`;
+    hdr.onclick=()=>{openPhases.has(pi)?openPhases.delete(pi):openPhases.add(pi);build();};
+    block.appendChild(hdr);
+    if(open){
+      const grid=document.createElement("div");grid.className="topics-grid";
+      p.topics.forEach((t,ti)=>{
+        const isDone=doneSet.has(key(pi,ti));
+        const hidden=!matchF(t)||!matchS(t);
+        const c=document.createElement("div");
+        c.className="tc"+(isDone?" done":"")+(hidden?" hidden":"")+(t.exam?" exam":"");
+        c.dataset.pi=pi;c.dataset.ti=ti;
+        const dl={b:"Iniciante",i:"Intermediário",a:"Avançado"}[t.d];
+        const yl={lab:"Lab/CLI",teo:"Teoria",con:"Conceito"}[t.y];
+        const yc={lab:"bd-lab",teo:"bd-teo",con:"bd-con"}[t.y];
+        c.innerHTML=`
+          <div class="tc-top">
+            <div class="tc-chk">${isDone?"✓":""}</div>
+            <div class="tc-body">
+              <div class="tc-title">${t.t}${t.exam?' <span style="color:var(--gold);font-size:11px">⭐</span>':""}</div>
+              <div class="tc-desc">${t.desc}</div>
+            </div>
+          </div>
+          <div class="tc-badges">
+            <span class="badge bd-${t.d}">${dl}</span>
+            <span class="badge ${yc}">${yl}</span>
+            <span class="badge bd-hrs">~${t.hrs}h</span>
+          </div>
+          ${t.cmds&&t.cmds.length?`<div class="tc-cmds"><div class="cmds-lbl">Comandos IOS</div><div class="cmd-row">${t.cmds.map(x=>`<span class="cmd">${x}</span>`).join("")}</div></div>`:""}
+          <div class="tc-subs">
+            <div class="subs-lbl">O que estudar</div>
+            ${t.sub.map(s=>`<div class="sub-row"><span class="sub-dot"></span><span>${s}</span></div>`).join("")}
+          </div>
+          ${t.exam&&t.etip?`<div class="tc-exam-tip"><span class="exam-tip-ico">💡</span><span class="exam-tip-txt"><strong>Dica de prova:</strong> ${t.etip}</span></div>`:""}`;
+        c.onclick=()=>toggleTopic(pi,ti);
+        grid.appendChild(c);
+      });
+      block.appendChild(grid);
+    }
+    content.appendChild(block);
+  });
+  buildCerts();updateStats();
+}
+
+buildFilters();buildDomains();buildResources();buildTips();build();
+</script>
+</body>
+</html>
